@@ -1,0 +1,16 @@
+# AWS Base Configuration
+aws_region   = "eu-west-1"
+project_name = "automated-backup-system"
+environment  = "production"
+
+# GitHub OIDC Configuration
+github_org  = "ikerruiz1"
+github_repo = "automated-backup-system"
+
+# Alerts
+notification_email = "[EMAIL_ADDRESS]"
+
+# Backup Retention Policies (Days)
+backup_retention_days         = 30
+vault_lock_min_retention_days = 15
+vault_lock_max_retention_days = 365

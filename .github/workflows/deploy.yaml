@@ -1,0 +1,93 @@
+name: Enterprise Backup CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+  security-events: write
+
+jobs:
+  security-and-lint:
+    name: Security Scan & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Checkov Security Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          framework: terraform
+          output_format: cli
+          soft_fail: true
+          skip_check: CKV_AWS_144
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Init TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint -f compact
+
+  terraform-deploy:
+    name: Terraform Provisioning
+    needs: security-and-lint
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_notification_email: ${{ secrets.NOTIFICATION_EMAIL }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_project_name: ${{ vars.PROJECT_NAME }}
+      TF_VAR_environment: ${{ vars.ENVIRONMENT }}
+      TF_VAR_backup_retention_days: ${{ vars.BACKUP_RETENTION_DAYS }}
+      TF_VAR_vault_lock_min_retention_days: ${{ vars.VAULT_LOCK_MIN_RETENTION_DAYS }}
+      TF_VAR_vault_lock_max_retention_days: ${{ vars.VAULT_LOCK_MAX_RETENTION_DAYS }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.5.7'
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=backup-project/terraform.tfstate" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ vars.TF_DYNAMODB_TABLE }}"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
