@@ -1,11 +1,11 @@
 # AWS Base Configuration
-aws_region   = "eu-west-1"
-project_name = "automated-backup-system"
-environment  = "production"
+aws_region   = "YOUR_AWS_REGION"
+project_name = "YOUR_PROJECT_NAME"
+environment  = "YOUR_ENVIRONMENT"
 
 # GitHub OIDC Configuration
-github_org  = "ikerruiz1"
-github_repo = "automated-backup-system"
+github_org  = "YOUR_GITHUB_USERNAME"
+github_repo = "YOUR_REPOSITORY_NAME"
 
 # Alerts
 notification_email = "[EMAIL_ADDRESS]"
