@@ -13,13 +13,11 @@ variable "project_name" {
 variable "github_org" {
   type        = string
   description = "GitHub Organization or Username"
-  default     = "your-github-username"
 }
 
 variable "github_repo" {
   type        = string
   description = "GitHub Repository Name"
-  default     = "your-repo-name"
 }
 
 variable "environment" {
