@@ -277,7 +277,7 @@ resource "aws_db_instance" "enterprise_db" {
   allocated_storage          = 20
   storage_type               = "gp3"
   engine                     = "postgres"
-  engine_version             = "15.7"
+  engine_version             = "15"
   instance_class             = "db.t3.micro"
   backup_retention_period    = 0
   db_subnet_group_name       = aws_db_subnet_group.rds_subnet_group.name
