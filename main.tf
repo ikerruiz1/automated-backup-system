@@ -71,4 +71,5 @@ resource "aws_backup_restore_testing_selection" "ebs_simulation" {
   restore_testing_plan_name = aws_backup_restore_testing_plan.simulation.name
   iam_role_arn              = aws_iam_role.backup_service_role.arn
   protected_resource_type   = "AWS::EC2::Volume"
+  protected_resource_arns   = ["*"]
 }
