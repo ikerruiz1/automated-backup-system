@@ -39,9 +39,3 @@ variable "vault_lock_max_retention_days" {
   description = "Maximum immutable retention days required by Vault Lock (Compliance Mode)"
   default     = 365
 }
-
-variable "kms_key_arn" {
-  type        = string
-  description = "ARN of the custom KMS key to encrypt the backup vault (optional)"
-  default     = ""
-}
