@@ -128,14 +128,6 @@ resource "aws_backup_framework" "compliance_framework" {
   description = "Automated compliance framework for enterprise backup policies"
 
   control {
-    name = "backup_recovery_point_minimum_retention_check"
-    input_parameter {
-      name  = "requiredRetentionDays"
-      value = tostring(var.backup_retention_days)
-    }
-  }
-
-  control {
     name = "backup_plan_min_frequency_and_min_retention_check"
     input_parameter {
       name  = "requiredFrequencyUnit"

@@ -277,7 +277,7 @@ resource "aws_db_instance" "enterprise_db" {
   allocated_storage          = 20
   storage_type               = "gp3"
   engine                     = "postgres"
-  engine_version             = "15.4"
+  engine_version             = "15.7"
   instance_class             = "db.t3.micro"
   backup_retention_period    = 0
   db_subnet_group_name       = aws_db_subnet_group.rds_subnet_group.name
@@ -401,7 +401,6 @@ resource "aws_s3_bucket_logging" "secure_data_logging" {
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/${var.project_name}-flow-logs"
   retention_in_days = 365
-  kms_key_id        = aws_kms_key.enterprise_cmk.arn
 }
 
 resource "aws_iam_role" "vpc_flow_logs_role" {
