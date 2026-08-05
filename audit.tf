@@ -134,6 +134,38 @@ resource "aws_backup_framework" "compliance_framework" {
   ]
 
   control {
-    name = "backup_plan_in_use_check"
+    name = "BACKUP_RECOVERY_POINT_ENCRYPTED"
+  }
+
+  control {
+    name = "BACKUP_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+    scope {
+      compliance_resource_types = [
+        "EBS",
+        "RDS",
+        "S3"
+      ]
+    }
+  }
+
+  control {
+    name = "BACKUP_RESOURCES_PROTECTED_BY_BACKUP_VAULT_LOCK"
+    input_parameter {
+      name  = "maxRetentionDays"
+      value = tostring(var.vault_lock_max_retention_days)
+    }
+    input_parameter {
+      name  = "minRetentionDays"
+      value = tostring(var.vault_lock_min_retention_days)
+    }
+    scope {
+      compliance_resource_types = [
+        "EBS"
+      ]
+    }
+  }
+
+  tags = {
+    Name = "${var.project_name}-compliance-framework"
   }
 }
