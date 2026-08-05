@@ -71,10 +71,10 @@ resource "aws_security_group" "vpc_endpoints_sg" {
   }
 
   egress {
-    description = "Allow all outbound traffic for VPC endpoints"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "Allow HTTPS outbound traffic only"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -85,10 +85,10 @@ resource "aws_security_group" "ec2_sg" {
   vpc_id      = aws_vpc.main.id
 
   egress {
-    description = "Allow all outbound traffic from EC2 instances"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "Allow HTTPS outbound traffic for updates and API calls"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -107,11 +107,11 @@ resource "aws_security_group" "rds_sg" {
   }
 
   egress {
-    description = "Allow all outbound traffic from RDS"
+    description = "Allow outbound traffic internally to VPC only"
     from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 }
 
@@ -245,6 +245,62 @@ resource "aws_instance" "app_server" {
 
   tags = {
     Name   = "${var.project_name}-app-server"
+    Backup = "true"
+  }
+}
+
+# IAM Role for RDS Enhanced Monitoring (Requerido para CKV_AWS_118)
+resource "aws_iam_role" "rds_monitoring_role" {
+  name = "${var.project_name}-rds-monitoring-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "monitoring.rds.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "rds_monitoring_policy" {
+  role       = aws_iam_role.rds_monitoring_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
+# RDS Database with all security measures activated for Checkov
+resource "aws_db_instance" "enterprise_db" {
+  identifier                 = "${var.project_name}-db"
+  allocated_storage          = 20
+  storage_type               = "gp3"
+  engine                     = "postgres"
+  engine_version             = "15.4"
+  instance_class             = "db.t3.micro"
+  backup_retention_period    = 7
+  db_subnet_group_name       = aws_db_subnet_group.rds_subnet_group.name
+  vpc_security_group_ids     = [aws_security_group.rds_sg.id]
+  multi_az                   = true
+  storage_encrypted          = true
+  kms_key_id                 = aws_kms_key.enterprise_cmk.arn
+  username                   = "admin_user"
+  password                   = random_password.db_password.result
+  skip_final_snapshot        = true
+  auto_minor_version_upgrade = true
+
+  # Security fixes for Checkov:
+  deletion_protection                 = true
+  iam_database_authentication_enabled = true
+  performance_insights_enabled        = true
+  performance_insights_kms_key_id     = aws_kms_key.enterprise_cmk.arn
+  enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
+  monitoring_interval                 = 60
+  monitoring_role_arn                 = aws_iam_role.rds_monitoring_role.arn
+
+  tags = {
+    Name   = "${var.project_name}-db"
     Backup = "true"
   }
 }

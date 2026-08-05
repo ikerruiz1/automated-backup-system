@@ -34,6 +34,13 @@ resource "aws_s3_bucket_public_access_block" "tfstate_block" {
   restrict_public_buckets = true
 }
 
+# 2. KMS CMK for DynamoDB Terraform state lock
+resource "aws_kms_key" "dynamo_cmk" {
+  description             = "KMS CMK for DynamoDB Terraform state lock"
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+}
+
 # 2. DynamoDB Table for Terraform State Locking
 resource "aws_dynamodb_table" "tflock" {
   name         = "${var.project_name}-tflock"
@@ -48,7 +55,8 @@ resource "aws_dynamodb_table" "tflock" {
     enabled = true
   }
   server_side_encryption {
-    enabled = true
+    enabled     = true
+    kms_key_arn = aws_kms_key.dynamo_cmk.arn
   }
 }
 
@@ -87,8 +95,8 @@ resource "aws_iam_role" "github_actions_role" {
 
 # 5. Administrator Access Policy attached to GitHub Actions Role (for full automation)
 
-# checkov:skip=CKV_AWS_274: "GitHub Actions bootstrap role requires administrator access for end-to-end Terraform deployment"
 resource "aws_iam_role_policy_attachment" "admin_attachment" {
+  # checkov:skip=CKV_AWS_274: "Bootstrap role requires administrator access to deploy entire infrastructure"
   role       = aws_iam_role.github_actions_role.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
