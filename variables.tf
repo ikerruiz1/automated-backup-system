@@ -22,17 +22,6 @@ variable "notification_email" {
   default     = "ops-alerts@enterprise.com"
 }
 
-
-variable "github_org" {
-  type        = string
-  description = "GitHub organization or user that owns the repository"
-}
-
-variable "github_repo" {
-  type        = string
-  description = "Name of the GitHub repository"
-}
-
 variable "backup_retention_days" {
   type        = number
   description = "Number of days recovery points will be retained in the vault before expiring"
