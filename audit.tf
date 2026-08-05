@@ -125,27 +125,15 @@ data "aws_caller_identity" "current" {}
 # AWS Backup Framework for Audit Manager and Compliance
 resource "aws_backup_framework" "compliance_framework" {
   name        = "${replace(var.project_name, "-", "_")}_compliance_framework"
-  description = "Automated compliance framework for enterprise backup policies"
-
-  control {
-    name = "backup_plan_min_frequency_and_min_retention_check"
-    input_parameter {
-      name  = "requiredFrequencyUnit"
-      value = "HOURS"
-    }
-    input_parameter {
-      name  = "requiredFrequencyValue"
-      value = "24"
-    }
-    input_parameter {
-      name  = "requiredRetentionDays"
-      value = tostring(var.backup_retention_days)
-    }
-  }
+  description = "Enterprise compliance framework for backup governance"
 
   depends_on = [
     aws_config_configuration_recorder.recorder,
     aws_config_configuration_recorder_status.recorder_status,
     aws_config_delivery_channel.channel
   ]
+
+  control {
+    name = "recovery_point_manual_deletion_disabled"
+  }
 }
