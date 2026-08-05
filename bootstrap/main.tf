@@ -4,10 +4,6 @@ data "aws_caller_identity" "current" {}
 resource "aws_s3_bucket" "tfstate" {
   bucket        = "${var.project_name}-tfstate-${data.aws_caller_identity.current.account_id}"
   force_destroy = false
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_s3_bucket_versioning" "tfstate_versioning" {
