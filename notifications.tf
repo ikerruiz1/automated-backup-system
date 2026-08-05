@@ -1,6 +1,7 @@
 # SNS Topic for Backup Operational Alerts
 resource "aws_sns_topic" "backup_alerts" {
-  name = "${var.project_name}-alerts-topic"
+  name              = "${var.project_name}-alerts-topic"
+  kms_master_key_id = "alias/aws/sns"
 }
 
 # SNS Topic Subscription for Email Notifications

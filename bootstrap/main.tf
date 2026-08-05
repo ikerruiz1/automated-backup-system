@@ -44,6 +44,12 @@ resource "aws_dynamodb_table" "tflock" {
     name = "LockID"
     type = "S"
   }
+  point_in_time_recovery {
+    enabled = true
+  }
+  server_side_encryption {
+    enabled = true
+  }
 }
 
 # 3. GitHub OIDC Identity Provider in AWS (Automated)
@@ -80,6 +86,8 @@ resource "aws_iam_role" "github_actions_role" {
 }
 
 # 5. Administrator Access Policy attached to GitHub Actions Role (for full automation)
+
+# checkov:skip=CKV_AWS_274: "GitHub Actions bootstrap role requires administrator access for end-to-end Terraform deployment"
 resource "aws_iam_role_policy_attachment" "admin_attachment" {
   role       = aws_iam_role.github_actions_role.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"

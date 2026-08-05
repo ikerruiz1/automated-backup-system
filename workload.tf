@@ -63,10 +63,19 @@ resource "aws_security_group" "vpc_endpoints_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
+    description = "Allow TLS inbound traffic from internal VPC CIDR for endpoints"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  egress {
+    description = "Allow all outbound traffic for VPC endpoints"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -76,6 +85,7 @@ resource "aws_security_group" "ec2_sg" {
   vpc_id      = aws_vpc.main.id
 
   egress {
+    description = "Allow all outbound traffic from EC2 instances"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -89,10 +99,19 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
+    description     = "Allow PostgreSQL inbound traffic from EC2 security group"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.ec2_sg.id]
+  }
+
+  egress {
+    description = "Allow all outbound traffic from RDS"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -209,6 +228,8 @@ resource "aws_instance" "app_server" {
   subnet_id              = aws_subnet.private[0].id
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
+  ebs_optimized          = true
+  monitoring             = true
 
   metadata_options {
     http_endpoint = "enabled"
