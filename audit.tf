@@ -147,5 +147,9 @@ resource "aws_backup_framework" "compliance_framework" {
     name = "backup_vault_encrypted_with_customer_managed_key_check"
   }
 
-  depends_on = [aws_config_configuration_recorder_status.recorder_status]
+  depends_on = [
+    aws_config_configuration_recorder.recorder,
+    aws_config_configuration_recorder_status.recorder_status,
+    aws_config_delivery_channel.channel
+  ]
 }
