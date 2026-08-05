@@ -134,6 +134,6 @@ resource "aws_backup_framework" "compliance_framework" {
   ]
 
   control {
-    name = "recovery_point_manual_deletion_disabled"
+    name = "backup_plan_in_use_check"
   }
 }
