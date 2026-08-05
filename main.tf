@@ -67,7 +67,7 @@ resource "aws_backup_restore_testing_plan" "simulation" {
 }
 
 resource "aws_backup_restore_testing_selection" "ebs_simulation" {
-  name                      = "${var.project_name}-ebs-restore-test"
+  name                      = "${replace(var.project_name, "-", "_")}_ebs_restore_test"
   restore_testing_plan_name = aws_backup_restore_testing_plan.simulation.name
   iam_role_arn              = aws_iam_role.backup_service_role.arn
   protected_resource_type   = "AWS::EC2::Volume"
