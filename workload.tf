@@ -305,30 +305,6 @@ resource "aws_db_instance" "enterprise_db" {
   }
 }
 
-resource "aws_db_instance" "enterprise_db" {
-  identifier                 = "${var.project_name}-db"
-  allocated_storage          = 20
-  storage_type               = "gp3"
-  engine                     = "postgres"
-  engine_version             = "15.4"
-  instance_class             = "db.t3.micro"
-  backup_retention_period    = 7
-  db_subnet_group_name       = aws_db_subnet_group.rds_subnet_group.name
-  vpc_security_group_ids     = [aws_security_group.rds_sg.id]
-  multi_az                   = true
-  storage_encrypted          = true
-  kms_key_id                 = aws_kms_key.enterprise_cmk.arn
-  username                   = "admin_user"
-  password                   = random_password.db_password.result
-  skip_final_snapshot        = true
-  auto_minor_version_upgrade = true
-
-  tags = {
-    Name   = "${var.project_name}-db"
-    Backup = "true"
-  }
-}
-
 resource "aws_s3_bucket" "secure_data_bucket" {
   bucket        = "${var.project_name}-secure-data-${data.aws_caller_identity.current_workload.account_id}"
   force_destroy = true
@@ -424,7 +400,8 @@ resource "aws_s3_bucket_logging" "secure_data_logging" {
 # 2. Infrastructure for VPC Flow Logs
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/${var.project_name}-flow-logs"
-  retention_in_days = 7
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.enterprise_cmk.arn
 }
 
 resource "aws_iam_role" "vpc_flow_logs_role" {
@@ -441,9 +418,9 @@ resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogGroups", "logs:DescribeLogStreams"]
+      Action   = ["logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams"]
       Effect   = "Allow"
-      Resource = "*"
+      Resource = "${aws_cloudwatch_log_group.vpc_flow_logs.arn}:*"
     }]
   })
 }
