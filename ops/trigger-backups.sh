@@ -35,7 +35,7 @@ aws backup start-backup-job \
   --backup-vault-name "$VAULT_NAME" \
   --resource-arn "arn:aws:s3:::${BUCKET_NAME}" \
   --iam-role-arn "$IAM_ROLE_ARN" \
-  --lifecycle delete_after_days="$RETENTION_DAYS" \
+  --lifecycle DeleteAfterDays="$RETENTION_DAYS" \
   > /dev/null
 echo "- S3 Backup initiated."
 
@@ -44,7 +44,7 @@ aws backup start-backup-job \
   --backup-vault-name "$VAULT_NAME" \
   --resource-arn "arn:aws:ec2:${REGION}:${ACCOUNT_ID}:instance/${INSTANCE_ID}" \
   --iam-role-arn "$IAM_ROLE_ARN" \
-  --lifecycle delete_after_days="$RETENTION_DAYS" \
+  --lifecycle DeleteAfterDays="$RETENTION_DAYS" \
   > /dev/null
 echo "- EC2 Backup initiated."
 
@@ -53,7 +53,7 @@ aws backup start-backup-job \
   --backup-vault-name "$VAULT_NAME" \
   --resource-arn "arn:aws:rds:${REGION}:${ACCOUNT_ID}:db:${PROJECT_NAME}-db" \
   --iam-role-arn "$IAM_ROLE_ARN" \
-  --lifecycle delete_after_days="$RETENTION_DAYS" \
+  --lifecycle DeleteAfterDays="$RETENTION_DAYS" \
   > /dev/null
 echo "- RDS Backup initiated."
 
