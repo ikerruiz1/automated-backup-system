@@ -279,7 +279,7 @@ resource "aws_db_instance" "enterprise_db" {
   engine                     = "postgres"
   engine_version             = "15.4"
   instance_class             = "db.t3.micro"
-  backup_retention_period    = 7
+  backup_retention_period    = 0
   db_subnet_group_name       = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids     = [aws_security_group.rds_sg.id]
   multi_az                   = true

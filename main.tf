@@ -1,10 +1,10 @@
 # Regional AWS Backup Settings (Mandatory Opt-In for S3)
 resource "aws_backup_region_settings" "settings" {
   resource_type_opt_in_preference = {
-    "AWS::EC2::Instance"   = true
-    "AWS::EC2::Volume"     = true
-    "AWS::RDS::DBInstance" = true
-    "AWS::S3::Bucket"      = true
+    "EC2" = true
+    "EBS" = true
+    "RDS" = true
+    "S3"  = true
   }
 }
 
@@ -70,6 +70,6 @@ resource "aws_backup_restore_testing_selection" "ebs_simulation" {
   name                      = "${replace(var.project_name, "-", "_")}_ebs_restore_test"
   restore_testing_plan_name = aws_backup_restore_testing_plan.simulation.name
   iam_role_arn              = aws_iam_role.backup_service_role.arn
-  protected_resource_type   = "AWS::EC2::Volume"
+  protected_resource_type   = "EBS"
   protected_resource_arns   = ["*"]
 }
