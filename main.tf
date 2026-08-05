@@ -55,7 +55,7 @@ resource "aws_backup_selection" "resource_selection" {
 # Periodic Restore Simulation (AWS Backup Restore Testing)
 # -------------------------------------------------------------------------
 resource "aws_backup_restore_testing_plan" "simulation" {
-  name                = "${var.project_name}-restore-simulation"
+  name                = "${replace(var.project_name, "-", "_")}_restore_simulation"
   schedule_expression = "cron(0 5 ? * 1 *)" # Weekly execution (Sundays at 05:00 AM UTC)
 
   recovery_point_selection {

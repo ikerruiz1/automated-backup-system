@@ -124,7 +124,7 @@ data "aws_caller_identity" "current" {}
 
 # AWS Backup Framework for Audit Manager and Compliance
 resource "aws_backup_framework" "compliance_framework" {
-  name        = "${var.project_name}-compliance-framework"
+  name        = "${replace(var.project_name, "-", "_")}_compliance_framework"
   description = "Automated compliance framework for enterprise backup policies"
 
   control {
