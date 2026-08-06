@@ -142,16 +142,14 @@ chmod +x trigger-backups.sh
 ```
 Check your configured email inbox. You will receive an initial SNS subscription confirmation (which must be accepted manually) and subsequent EventBridge alerts as each asynchronous backup job transitions to a ```COMPLETED``` state.
 
-[!CAUTION]
-Important: Teardown & Irreversible Costs (Vault Lock)
-This project configures AWS Backup Vault Lock in Compliance Mode. This enforces true WORM immutability at the infrastructure level to protect against ransomware.
+> [!CAUTION]
+> **Important: Teardown & Irreversible Costs (Vault Lock)**
+> This project configures AWS Backup Vault Lock in Compliance Mode. This enforces true WORM immutability at the infrastructure level to protect against ransomware.
 
-[!WARNING]
-CRITICAL WARNING:
-
-Once deployed, neither the account administrator nor the AWS root user can delete the Backup Vault or its recovery points until the vault_lock_min_retention_days period expires.
-
-Running a standard terraform destroy directly will fail when attempting to delete the Backup Vault due to API access denial.
+> [!WARNING]
+> **CRITICAL WARNING:**
+> * Once deployed, neither the account administrator nor the AWS root user can delete the Backup Vault or its recovery points until the `vault_lock_min_retention_days` period expires.
+> * Running a standard `terraform destroy` directly will fail when attempting to delete the Backup Vault due to API access denial.
 
 Automated Teardown Process
 To safely remove state tracking of locked resources, stop billing for high-cost compute/database resources (EC2, RDS, VPC), and clean up the environment, run the automated teardown script from the root of the project:
@@ -172,5 +170,5 @@ Destroys the remaining workload resources (```terraform destroy```).
 
 Destroys the bootstrap infrastructure (S3 backend and OIDC roles).
 
-[!NOTE]
-You will continue to be billed for the Backup Vault's underlying storage costs until the retention period expires, at which point you can delete the vault manually via the AWS Management Console.
+> [!NOTE]
+>  You will continue to be billed for the Backup Vault's underlying storage costs until the retention period expires, at which point you can delete the vault manually via the AWS Management Console.
