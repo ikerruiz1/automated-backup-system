@@ -1,7 +1,6 @@
 # SNS Topic for Backup Operational Alerts
 resource "aws_sns_topic" "backup_alerts" {
-  name              = "${var.project_name}-alerts-topic"
-  kms_master_key_id = "alias/aws/sns"
+  name = "${var.project_name}-alerts-topic"
 }
 
 # SNS Topic Subscription for Email Notifications
@@ -11,7 +10,7 @@ resource "aws_sns_topic_subscription" "email_subscription" {
   endpoint  = var.notification_email
 }
 
-# Amazon EventBridge Rule to capture AWS Backup Job State Changes (Success, Failed, Expired)
+# Amazon EventBridge Rule to capture AWS Backup Job State Changes
 resource "aws_cloudwatch_event_rule" "backup_events" {
   name        = "${var.project_name}-backup-events-rule"
   description = "Capture AWS Backup state changes and job failures"
