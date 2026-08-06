@@ -1,4 +1,4 @@
-<h1 align="center">Automated Centralized Disaster Recovery Infrastructure</h1>
+<h1 align="center">Automated Backup Sysytem</h1>
 
 <p align="center">
   <b>Centralized and automated disaster recovery infrastructure in AWS built with Terraform and GitHub Actions.</b>
@@ -16,10 +16,10 @@
 ---
 
 <p align="center">
-  <img src="./p2-aws-lm-def (1).svg" alt="Light Mode Architecture Diagram" width="100%">
+  <img src="./assets/p2-aws-lm-def (1).svg" alt="Light Mode Architecture Diagram" width="100%">
 </p>
 <p align="center">
-  <img src="./p2-aws-dm-def (1).svg" alt="Dark Mode Architecture Diagram" width="100%">
+  <img src="./assets/p2-aws-dm-def (1).svg" alt="Dark Mode Architecture Diagram" width="100%">
 </p>
 
 ---
