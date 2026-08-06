@@ -1,4 +1,4 @@
-<h1 align="center">Automated Backup Sysytem</h1>
+<h1 align="center">Automated Backup System</h1>
 
 <p align="center">
   <b>Centralized and automated disaster recovery infrastructure in AWS built with Terraform and GitHub Actions.</b>
