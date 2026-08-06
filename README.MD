@@ -26,7 +26,7 @@
 
 ## 🎥 Video Demo & Walkthrough
 
-Haz clic en la imagen de abajo para ver la demostración completa y explicación técnica del proyecto en YouTube:
+Click on the image below to watch the full demonstration and technical explanation of the project on YouTube:
 
 [![Watch the video](https://img.youtube.com/vi/rF1hhSFqJtg/hqdefault.jpg)](https://youtu.be/rF1hhSFqJtg)
 
