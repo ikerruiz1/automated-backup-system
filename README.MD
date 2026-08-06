@@ -90,7 +90,7 @@ GitHub CLI (```gh```) installed and authenticated locally.
 
 Deployment Instructions
 -
-> **1. Fork and Clone the Repository**
+**1. Fork and Clone the Repository**
 
 Since this project uses GitHub Actions with OIDC for automated deployment, you must host the code in your own GitHub repository.
 
@@ -111,7 +111,7 @@ cp terraform.tfvars.example terraform.tfvars
 ```
 Edit ```terraform.tfvars``` with your specific AWS region, project name, GitHub organization/username, repository name, notification email, and retention policies.
 
-> **3. Authenticate CLIs**
+**3. Authenticate CLIs**
 
 Ensure your terminal session has active credentials for both AWS and GitHub.
 
@@ -122,17 +122,17 @@ aws sts get-caller-identity
 # Authenticate GitHub CLI (Select HTTPS/SSH and login via browser/token)
 gh auth login
 ```
-> **4. Execute Zero-Touch Provisioning**
+**4. Execute Zero-Touch Provisioning**
 Run the platform orchestration script. This script will automatically provision the S3 backend and DynamoDB lock tables, configure the AWS OIDC provider, inject all required secrets and variables into your GitHub repository, and trigger the GitHub Actions pipeline.
 
 ```
 chmod +x setup.sh
 ./setup.sh
 ```
-> **5. Monitor CI/CD Pipeline**
+**5. Monitor CI/CD Pipeline**
 Once the script completes, control is transferred to GitHub Actions. Navigate to the Actions tab in your GitHub repository to monitor the static code analysis (TFLint and Checkov) and the final infrastructure provisioning (taking approximately 15 minutes).
 
-> **6. Operational Testing**
+**6. Operational Testing**
 By default, backups execute automatically via scheduled cron jobs. To force an immediate backup of the infrastructure (S3, EC2, RDS) for testing or demonstration purposes without accessing the AWS Console, execute the operations script:
 
 ```
